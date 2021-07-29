@@ -1,2 +1,2 @@
 # xeuclid
-Extended Euclidean Algorithm based on `opeenssl`
+Extended Euclidean Algorithm based on `openssl`

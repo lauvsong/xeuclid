@@ -34,6 +34,14 @@ BIGNUM *XEuclid(BIGNUM *x, BIGNUM *y, const BIGNUM *a, const BIGNUM *b)
         return r2;
 }
 
+void printBN(char *msg, BIGNUM * a)
+{
+        char *num = BN_bn2dec(a);
+        printf("%s %s\n", msg, num);
+        OPENSSL_free(num);
+}
+
+
 int main (int argc, char *argv[])
 {
         BIGNUM *a = BN_new();
