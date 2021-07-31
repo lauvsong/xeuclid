@@ -3,35 +3,43 @@
 
 BIGNUM *XEuclid(BIGNUM *x, BIGNUM *y, const BIGNUM *a, const BIGNUM *b)
 {
-        BIGNUM *r1 = a;
-        BIGNUM *r2 = b;
-        BIGNUM *x1 = 1;
-        BIGNUM *x2 = 0;
-        BIGNUM *y1 = 0;
-        BIGNUM *y2 = 1;
+        BIGNUM *r1 = BN_new();
+        BIGNUM *r2 = BN_new();
+        BIGNUM *s1 = BN_new();
+        BIGNUM *s2 = BN_new();
+        BIGNUM *t1 = BN_new();
+        BIGNUM *t2 = BN_new();
 
-        BIGNUM *r;
-        BIGNUM *q;
-        BIGNUM *rem;
-        BN_CTX *ctx;
-        BIGNUM *tmp;
+        BIGNUM *q = BN_new();
+        BIGNUM *r = BN_new();
+        BN_CTX *ctx = BN_CTX_new();
+        BIGNUM *tmp = BN_new();
 
-        while(r2){
-                q = 0;
-                rem = 0;
-                BN_div(q,rem,r1,r2,ctx);
-                r1 = r2, r2=rem;
+        BN_copy(r1, a);
+        BN_copy(r2, b);
+        BN_one(s1);
+        BN_zero(s2);
+        BN_zero(t1);
+        BN_one(t2);
 
-                BN_mul(tmp,q,x2,ctx);
-                BN_sub(x,x1,tmp);
-                x1 = x2, x2 = x;
+        while(!BN_is_zero(r2)){
+                BN_div(q,r,r1,r2,ctx);
+                BN_copy(r1, r2);
+                BN_copy(r2, r);
 
-                BN_mul(tmp,q,y2,ctx);
-                BN_sub(y,y1,tmp);
-                y1 = y2, y2 = y;
+                BN_mul(tmp,q,s2,ctx);
+                BN_sub(x,s1,tmp);
+                BN_copy(s1, s2);
+                BN_copy(s2, x);
+
+                BN_mul(tmp,q,t2,ctx);
+                BN_sub(y,t1,tmp);
+                BN_copy(t1, t2);
+                BN_copy(t2, y);
         }
-        x = x1, y = y1;
-        return r2;
+        BN_copy(x, s1);
+        BN_copy(y, t1);
+        return r1;
 }
 
 void printBN(char *msg, BIGNUM * a)
